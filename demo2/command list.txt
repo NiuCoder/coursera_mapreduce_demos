@@ -1,0 +1,28 @@
+一、更改python可执行权限：
+chmod +x join2_mapper.py
+chmod +x join2_reducer.py
+
+二、调用随机生成输入文本
+python make_join2data.py y 1000 13 > join2_gennumA.txt
+python make_join2data.py y 2000 17 > join2_gennumB.txt
+python make_join2data.py y 3000 19 > join2_gennumC.txt
+python make_join2data.py n 100  23 > join2_genchanA.txt
+python make_join2data.py n 200  19 > join2_genchanB.txt
+python make_join2data.py n 300  37 > join2_genchanC.txt
+
+三、本地测试mapper
+ cat join2_gen*.txt | ./join2_mapper.py | sort
+
+四、本地测试mapper & reducer
+cat join2*.txt | ./join2_mapper.py | sort | ./join2_reducer.py
+
+五、将本地文件存入HDFS
+hdfs dsf -put join2*.txt /user/cloudera/input/join2
+
+六、hdfs下调用hadoop stream命令执行MapReduce程序
+hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming.jar \
+   -input /user/cloudera/input/join2 \
+   -output /user/cloudera/output_join2 \   
+   -mapper /home/cloudera/join1_mapper.py \   
+   -reducer /home/cloudera/join1_reducer.py
+注意，这里的output目录必须是一个新的目录，否则不能执行吗，这是hadoop的机制，防止覆盖数据

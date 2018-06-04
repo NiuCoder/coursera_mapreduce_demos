@@ -1,0 +1,20 @@
+一、更改python可执行权限：
+chmod +x join1_mapper.py
+chmod +x join1_reducer.py
+
+二、本地测试mapper
+cat join1_File*.txt | ./join1_mapper.py | sort
+
+三、本地测试mapper & reducer
+cat join1_File*.txt | ./join1_mapper.py | sort | ./join1_reducer.py
+
+四、将本地文件存入HDFS
+hdfs dsf -put join1*.txt /user/cloudera/input/join1
+
+五、hdfs下调用hadoop stream命令执行MapReduce程序
+hadoop jar /usr/lib/hadoop-mapreduce/hadoop-streaming.jar \
+   -input /user/cloudera/input/join1 \
+   -output /user/cloudera/output_join1 \   
+   -mapper /home/cloudera/join1_mapper.py \   
+   -reducer /home/cloudera/join1_reducer.py
+注意，这里的output目录必须是一个新的目录，否则不能执行吗，这是hadoop的机制，防止覆盖数据
